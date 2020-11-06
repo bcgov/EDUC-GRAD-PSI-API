@@ -12,9 +12,9 @@ public class EducPsiApiConstants {
 
     
     //Default Attribute value constants
-    public static final String DEFAULT_CREATED_BY = "SchoolAPI";
+    public static final String DEFAULT_CREATED_BY = "PSIAPI";
     public static final Date DEFAULT_CREATED_TIMESTAMP = new Date();
-    public static final String DEFAULT_UPDATED_BY = "SchoolAPI";
+    public static final String DEFAULT_UPDATED_BY = "PSIAPI";
     public static final Date DEFAULT_UPDATED_TIMESTAMP = new Date();
 
     //Default Date format constants
