@@ -12,11 +12,11 @@ objects:
       labels:
         build: educ-grad-psi-api-pipeline
       name: educ-grad-psi-api-pipeline
-      namespace: wbmfsf-tools
+      namespace: 77c02f-tools
     spec:
       source:
         git:
-          ref: master
+          ref: main
           uri: 'https://github.com/bcgov/EDUC-GRAD-PSI-API'
         type: Git
       strategy:
