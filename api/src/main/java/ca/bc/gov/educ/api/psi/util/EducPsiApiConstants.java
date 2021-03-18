@@ -9,6 +9,7 @@ public class EducPsiApiConstants {
     public static final String API_VERSION = "v1";
     public static final String GRAD_PSI_API_ROOT_MAPPING = "/api/" + API_VERSION + "/psi";
     public static final String GET_PSI_BY_CODE_MAPPING = "/{psiCode}";
+    public static final String GET_PSI_SEARCH_MAPPING="/search";
 
     
     //Default Attribute value constants
