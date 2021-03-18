@@ -25,8 +25,58 @@ public class Psi {
     private String transmissionMode;  
     private String psisCode;    
     private String psiUrl;
-    private String psiGrouping;
+    private String psiGrouping;    
     
+	public String getPsiName() {
+		return psiName != null ? psiName.trim(): null;
+	}
+
+	public String getAddress1() {
+		return address1 != null ? address1.trim(): null;
+	}
+	
+	public String getAddress2() {
+		return address2 != null ? address2.trim(): null;
+	}
+	
+	public String getAddress3() {
+		return address3 != null ? address2.trim(): null;
+	}
+
+	public String getCity() {
+		return city != null ? city.trim(): null;
+	}
+
+	public String getPostal() {
+		return postal != null ? postal.trim(): null;
+	}
+	
+	public String getAttentionName() {
+		return attentionName != null ? attentionName.trim(): null;
+	}
+	
+	public String getFax() {
+		return fax != null ? fax.trim(): null;
+	}
+
+	public String getPhone1() {
+		return phone1 != null ? phone1.trim(): null;
+	}
+
+	public String getPsisCode() {
+		return psisCode != null ? psisCode.trim(): null;
+	}
+
+	public String getPsiUrl() {
+		return psiUrl != null ? psiUrl.trim(): null;
+	}
+
+	public String getPsiGrouping() {
+		return psiGrouping != null ? psiGrouping.trim(): null;
+	}
+
+
+
 	@Override
 	public String toString() {
 		return "Psi [psiCode=" + psiCode + ", psiName=" + psiName + ", address1=" + address1 + ", address2=" + address2
