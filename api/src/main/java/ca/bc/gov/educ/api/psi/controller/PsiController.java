@@ -26,13 +26,16 @@ import ca.bc.gov.educ.api.psi.util.GradValidation;
 import ca.bc.gov.educ.api.psi.util.PermissionsContants;
 import ca.bc.gov.educ.api.psi.util.ResponseHelper;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 @CrossOrigin
 @RestController
 @RequestMapping(EducPsiApiConstants.GRAD_PSI_API_ROOT_MAPPING)
 @EnableResourceServer
-@OpenAPIDefinition(info = @Info(title = "API for PSI Data.", description = "This API is for PSI Tables.", version = "1"))
+@OpenAPIDefinition(info = @Info(title = "API for PSI Data.", description = "This API is for PSI.", version = "1"))
 public class PsiController {
 
     private static Logger logger = LoggerFactory.getLogger(PsiController.class);
@@ -48,6 +51,8 @@ public class PsiController {
 
     @GetMapping
     @PreAuthorize(PermissionsContants.READ_PSI_INFO)
+    @Operation(summary = "Find All PSIs", description = "Get All PSIs", tags = { "PSI" })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<List<Psi>> getAllPSIs(
     		@RequestParam(value = "pageNo", required = false,defaultValue = "0") Integer pageNo, 
             @RequestParam(value = "pageSize", required = false,defaultValue = "150") Integer pageSize) { 
@@ -57,6 +62,8 @@ public class PsiController {
     
     @GetMapping(EducPsiApiConstants.GET_PSI_BY_CODE_MAPPING)
     @PreAuthorize(PermissionsContants.READ_PSI_INFO)
+    @Operation(summary = "Find a PSI by Code", description = "Get a PSI by Code", tags = { "PSI" })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"),@ApiResponse(responseCode = "400", description = "BAD REQUEST")})
     public ResponseEntity<Psi> getPSIDetails(@PathVariable String psiCode) { 
     	logger.debug("getPSIDetails : ");
         return response.GET(psiService.getPSIDetails(psiCode));
@@ -64,6 +71,8 @@ public class PsiController {
     
     @GetMapping(EducPsiApiConstants.GET_PSI_SEARCH_MAPPING)
     @PreAuthorize(PermissionsContants.READ_PSI_INFO)
+    @Operation(summary = "Search for PSIs", description = "Search For PSIs", tags = { "PSI" })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<List<Psi>> getPSIByParams(
     		@RequestParam(value = "psiName", required = false) String psiName,
     		@RequestParam(value = "pageNo", required = false,defaultValue = "0") Integer pageNo, 
