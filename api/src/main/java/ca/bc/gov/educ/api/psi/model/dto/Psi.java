@@ -16,6 +16,8 @@ public class Psi {
 	private String city;	
 	private String provinceCode;	
 	private String countryCode;    
+	private String provinceName;
+    private String countryName;
     private String postal;    
     private String cslCode;    
     private String attentionName; 
