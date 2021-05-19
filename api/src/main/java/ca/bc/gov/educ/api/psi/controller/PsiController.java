@@ -2,16 +2,12 @@ package ca.bc.gov.educ.api.psi.controller;
 
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
-import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -53,11 +49,9 @@ public class PsiController {
     @PreAuthorize(PermissionsContants.READ_PSI_INFO)
     @Operation(summary = "Find All PSIs", description = "Get All PSIs", tags = { "PSI" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
-    public ResponseEntity<List<Psi>> getAllPSIs(
-    		@RequestParam(value = "pageNo", required = false,defaultValue = "0") Integer pageNo, 
-            @RequestParam(value = "pageSize", required = false,defaultValue = "150") Integer pageSize) { 
+    public ResponseEntity<List<Psi>> getAllPSIs() { 
     	logger.debug("getAllPSIs : ");
-        return response.GET(psiService.getPSIList(pageNo,pageSize));
+        return response.GET(psiService.getPSIList());
     }
     
     @GetMapping(EducPsiApiConstants.GET_PSI_BY_CODE_MAPPING)
@@ -75,17 +69,9 @@ public class PsiController {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<List<Psi>> getPSIByParams(
     		@RequestParam(value = "psiName", required = false) String psiName,
-    		@RequestParam(value = "pageNo", required = false,defaultValue = "0") Integer pageNo, 
-            @RequestParam(value = "pageSize", required = false,defaultValue = "20") Integer pageSize) {
-		OAuth2AuthenticationDetails auth = (OAuth2AuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails(); 
-    	String accessToken = auth.getTokenValue();
-    	if((StringUtils.isNotBlank(psiName) && psiName.length() < 3)) {
-    		validation.addError("Error in PSI Search");
-    	}
-    	if(validation.hasErrors()) {
-    		validation.stopOnErrors();
-    		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    	}
-		return response.GET(psiService.getPSIByParams(psiName,pageNo,pageSize,accessToken));
+    		@RequestParam(value = "psiCode", required = false) String psiCode,
+    		@RequestParam(value = "cslCode", required = false) String cslCode,
+    		@RequestParam(value = "transmissionMode", required = false) String transmissionMode) {
+		return response.GET(psiService.getPSIByParams(psiName,psiCode,cslCode,transmissionMode));
 	}
 }
