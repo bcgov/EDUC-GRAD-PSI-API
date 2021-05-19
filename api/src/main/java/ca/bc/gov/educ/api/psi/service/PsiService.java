@@ -7,8 +7,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
 
+import ca.bc.gov.educ.api.psi.model.dto.GradCountry;
+import ca.bc.gov.educ.api.psi.model.dto.GradProvince;
 import ca.bc.gov.educ.api.psi.model.dto.Psi;
 import ca.bc.gov.educ.api.psi.model.entity.PsiEntity;
 import ca.bc.gov.educ.api.psi.model.transformer.PsiTransformer;
@@ -16,6 +20,7 @@ import ca.bc.gov.educ.api.psi.repository.PsiCriteriaQueryRepository;
 import ca.bc.gov.educ.api.psi.repository.PsiRepository;
 import ca.bc.gov.educ.api.psi.repository.criteria.CriteriaHelper;
 import ca.bc.gov.educ.api.psi.repository.criteria.GradCriteria.OperationEnum;
+import ca.bc.gov.educ.api.psi.util.EducPsiApiConstants;
 
 @Service
 public class PsiService {
@@ -28,6 +33,15 @@ public class PsiService {
     
     @Autowired
     private PsiCriteriaQueryRepository  psiCriteriaQueryRepository;
+    
+    @Autowired
+    WebClient webClient;
+    
+    @Value(EducPsiApiConstants.ENDPOINT_COUNTRY_BY_COUNTRY_CODE_URL)
+    private String getCountryByCountryCodeURL;
+    
+    @Value(EducPsiApiConstants.ENDPOINT_PROVINCE_BY_PROV_CODE_URL)
+    private String getProvinceByProvCodeURL;
 
     @SuppressWarnings("unused")
 	private static Logger logger = LoggerFactory.getLogger(PsiService.class);
@@ -43,13 +57,32 @@ public class PsiService {
 		return psiTransformer.transformToDTO(psiRepository.findById(psiCode));
 	}
 
-	public List<Psi> getPSIByParams(String psiName, String psiCode, String cslCode, String transmissionMode) {
+	public List<Psi> getPSIByParams(String psiName, String psiCode, String cslCode, String transmissionMode,String accessToken) {
 		CriteriaHelper criteria = new CriteriaHelper();
         getSearchCriteria("psiCode", psiCode, criteria);
         getSearchCriteria("psiName", psiName, criteria);
         getSearchCriteria("cslCode", cslCode, criteria);
         getSearchCriteria("transmissionMode", transmissionMode, criteria);
-		return psiTransformer.transformToDTO(psiCriteriaQueryRepository.findByCriteria(criteria, PsiEntity.class));
+        List<Psi> psiList = psiTransformer.transformToDTO(psiCriteriaQueryRepository.findByCriteria(criteria, PsiEntity.class));
+        psiList.forEach(pL -> {
+    		GradCountry country = webClient.get()
+					.uri(String.format(getCountryByCountryCodeURL, pL.getCountryCode()))
+					.headers(h -> h.setBearerAuth(accessToken))
+					.retrieve()
+					.bodyToMono(GradCountry.class).block();
+	        if(country != null) {
+	        	pL.setCountryName(country.getCountryName());
+			}
+	        GradProvince province = webClient.get()
+					.uri(String.format(getProvinceByProvCodeURL, pL.getProvinceCode()))
+					.headers(h -> h.setBearerAuth(accessToken))
+					.retrieve()
+	        		.bodyToMono(GradProvince.class).block();
+	        if(province != null) {
+	        	pL.setProvinceName(province.getProvName());
+			}
+    	});
+		return psiList;
 	}
 	
 	public CriteriaHelper getSearchCriteria(String roolElement, String value, CriteriaHelper criteria) {

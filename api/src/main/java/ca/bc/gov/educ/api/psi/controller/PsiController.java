@@ -7,7 +7,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
+import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -72,6 +74,9 @@ public class PsiController {
     		@RequestParam(value = "psiCode", required = false) String psiCode,
     		@RequestParam(value = "cslCode", required = false) String cslCode,
     		@RequestParam(value = "transmissionMode", required = false) String transmissionMode) {
-		return response.GET(psiService.getPSIByParams(psiName,psiCode,cslCode,transmissionMode));
+    	OAuth2AuthenticationDetails auth =
+				(OAuth2AuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails();
+    	String accessToken = auth.getTokenValue();
+		return response.GET(psiService.getPSIByParams(psiName,psiCode,cslCode,transmissionMode,accessToken));
 	}
 }
