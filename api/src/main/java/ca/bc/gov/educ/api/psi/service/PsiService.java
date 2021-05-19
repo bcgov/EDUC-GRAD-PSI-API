@@ -1,7 +1,6 @@
 package ca.bc.gov.educ.api.psi.service;
 
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -11,8 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import ca.bc.gov.educ.api.psi.model.dto.Psi;
+import ca.bc.gov.educ.api.psi.model.entity.PsiEntity;
 import ca.bc.gov.educ.api.psi.model.transformer.PsiTransformer;
+import ca.bc.gov.educ.api.psi.repository.PsiCriteriaQueryRepository;
 import ca.bc.gov.educ.api.psi.repository.PsiRepository;
+import ca.bc.gov.educ.api.psi.repository.criteria.CriteriaHelper;
+import ca.bc.gov.educ.api.psi.repository.criteria.GradCriteria.OperationEnum;
 
 @Service
 public class PsiService {
@@ -22,36 +25,41 @@ public class PsiService {
 
     @Autowired
     private PsiTransformer psiTransformer;
+    
+    @Autowired
+    private PsiCriteriaQueryRepository  psiCriteriaQueryRepository;
 
-    private static Logger logger = LoggerFactory.getLogger(PsiService.class);
+    @SuppressWarnings("unused")
+	private static Logger logger = LoggerFactory.getLogger(PsiService.class);
 
      /**
-     * Get all Schools in School DTO
-     * @param pageSize 
-     * @param pageNo 
-     *
-     * @return Course 
-     * @throws java.lang.Exception
+     * Get all Schools in PSI DTO
      */
-    public List<Psi> getPSIList(Integer pageNo, Integer pageSize) {
-        List<Psi> schoolList  = new ArrayList<Psi>();
-
-        try {
-//        	Pageable paging = PageRequest.of(pageNo, pageSize);        	 
-//            Page<PsiEntity> pagedResult = psiRepository.findAll(paging);
-        	schoolList = psiTransformer.transformToDTO(psiRepository.findAll());            
-        } catch (Exception e) {
-            logger.debug("Exception:" + e);
-        }
-
-        return schoolList;
+    public List<Psi> getPSIList() {
+        return psiTransformer.transformToDTO(psiRepository.findAll());
     }
 
 	public Psi getPSIDetails(String psiCode) {
 		return psiTransformer.transformToDTO(psiRepository.findById(psiCode));
 	}
 
-	public List<Psi> getPSIByParams(String psiName, Integer pageNo, Integer pageSize, String accessToken) {
-		return psiTransformer.transformToDTO(psiRepository.searchForPSI(StringUtils.toRootUpperCase(StringUtils.strip(psiName, "*"))));
+	public List<Psi> getPSIByParams(String psiName, String psiCode, String cslCode, String transmissionMode) {
+		CriteriaHelper criteria = new CriteriaHelper();
+        getSearchCriteria("psiCode", psiCode, criteria);
+        getSearchCriteria("psiName", psiName, criteria);
+        getSearchCriteria("cslCode", cslCode, criteria);
+        getSearchCriteria("transmissionMode", transmissionMode, criteria);
+		return psiTransformer.transformToDTO(psiCriteriaQueryRepository.findByCriteria(criteria, PsiEntity.class));
 	}
+	
+	public CriteriaHelper getSearchCriteria(String roolElement, String value, CriteriaHelper criteria) {
+        if (StringUtils.isNotBlank(value)) {
+            if (StringUtils.contains(value, "*")) {
+                criteria.add(roolElement, OperationEnum.STARTS_WITH_IGNORE_CASE, StringUtils.strip(value.toUpperCase(), "*"));
+            } else {
+                criteria.add(roolElement, OperationEnum.EQUALS, value.toUpperCase());
+            }
+        }
+        return criteria;
+    }
 }
