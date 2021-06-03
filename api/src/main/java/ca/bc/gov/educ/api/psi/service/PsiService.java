@@ -7,7 +7,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -37,11 +36,8 @@ public class PsiService {
     @Autowired
     WebClient webClient;
     
-    @Value(EducPsiApiConstants.ENDPOINT_COUNTRY_BY_COUNTRY_CODE_URL)
-    private String getCountryByCountryCodeURL;
-    
-    @Value(EducPsiApiConstants.ENDPOINT_PROVINCE_BY_PROV_CODE_URL)
-    private String getProvinceByProvCodeURL;
+    @Autowired
+    EducPsiApiConstants educPsiApiConstants;
 
     @SuppressWarnings("unused")
 	private static Logger logger = LoggerFactory.getLogger(PsiService.class);
@@ -53,8 +49,27 @@ public class PsiService {
         return psiTransformer.transformToDTO(psiRepository.findAll());
     }
 
-	public Psi getPSIDetails(String psiCode) {
-		return psiTransformer.transformToDTO(psiRepository.findById(psiCode));
+	public Psi getPSIDetails(String psiCode,String accessToken) {
+		Psi psi =  psiTransformer.transformToDTO(psiRepository.findById(psiCode));
+		if(psi != null) {
+			GradCountry country = webClient.get()
+					.uri(String.format(educPsiApiConstants.getCountryByCountryCodeUrl(), psi.getCountryCode()))
+					.headers(h -> h.setBearerAuth(accessToken))
+					.retrieve()
+					.bodyToMono(GradCountry.class).block();
+	        if(country != null) {
+	        	psi.setCountryName(country.getCountryName());
+			}
+	        GradProvince province = webClient.get()
+					.uri(String.format(educPsiApiConstants.getProvinceByProvinceCodeUrl(), psi.getProvinceCode()))
+					.headers(h -> h.setBearerAuth(accessToken))
+					.retrieve()
+	        		.bodyToMono(GradProvince.class).block();
+	        if(province != null) {
+	        	psi.setProvinceName(province.getProvName());
+			}
+		}
+		return psi;
 	}
 
 	public List<Psi> getPSIByParams(String psiName, String psiCode, String cslCode, String transmissionMode,String accessToken) {
@@ -66,7 +81,7 @@ public class PsiService {
         List<Psi> psiList = psiTransformer.transformToDTO(psiCriteriaQueryRepository.findByCriteria(criteria, PsiEntity.class));
         psiList.forEach(pL -> {
     		GradCountry country = webClient.get()
-					.uri(String.format(getCountryByCountryCodeURL, pL.getCountryCode()))
+					.uri(String.format(educPsiApiConstants.getCountryByCountryCodeUrl(), pL.getCountryCode()))
 					.headers(h -> h.setBearerAuth(accessToken))
 					.retrieve()
 					.bodyToMono(GradCountry.class).block();
@@ -74,7 +89,7 @@ public class PsiService {
 	        	pL.setCountryName(country.getCountryName());
 			}
 	        GradProvince province = webClient.get()
-					.uri(String.format(getProvinceByProvCodeURL, pL.getProvinceCode()))
+					.uri(String.format(educPsiApiConstants.getProvinceByProvinceCodeUrl(), pL.getProvinceCode()))
 					.headers(h -> h.setBearerAuth(accessToken))
 					.retrieve()
 	        		.bodyToMono(GradProvince.class).block();

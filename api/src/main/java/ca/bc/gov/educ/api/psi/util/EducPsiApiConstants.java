@@ -2,6 +2,15 @@ package ca.bc.gov.educ.api.psi.util;
 
 import java.util.Date;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import lombok.Getter;
+import lombok.Setter;
+
+@Component
+@Getter
+@Setter
 public class EducPsiApiConstants {
 
     //API end-point Mapping constants
@@ -23,6 +32,8 @@ public class EducPsiApiConstants {
     
     public static final String TRAX_DATE_FORMAT = "yyyyMM";
     
-    public static final String ENDPOINT_COUNTRY_BY_COUNTRY_CODE_URL = "${endpoint.code-api.country.country-by-country-code.url}";
-    public static final String ENDPOINT_PROVINCE_BY_PROV_CODE_URL = "${endpoint.code-api.province.province-by-prov-code.url}";
+    @Value("${endpoint.code-api.country.country-by-country-code.url}")
+    private String countryByCountryCodeUrl;
+    @Value("${endpoint.code-api.province.province-by-prov-code.url}")
+    private String provinceByProvinceCodeUrl;
 }

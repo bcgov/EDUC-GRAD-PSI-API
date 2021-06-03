@@ -77,7 +77,13 @@ public class Psi {
 		return psiGrouping != null ? psiGrouping.trim(): null;
 	}
 
-
+	public String getProvinceName() {
+		return provinceName != null ? provinceName.trim(): null;
+	}
+	
+	public String getCountryName() {
+		return countryName != null ? countryName.trim(): null;
+	}
 
 	@Override
 	public String toString() {
