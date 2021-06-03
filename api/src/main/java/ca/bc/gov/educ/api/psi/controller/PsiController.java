@@ -21,7 +21,7 @@ import ca.bc.gov.educ.api.psi.model.dto.Psi;
 import ca.bc.gov.educ.api.psi.service.PsiService;
 import ca.bc.gov.educ.api.psi.util.EducPsiApiConstants;
 import ca.bc.gov.educ.api.psi.util.GradValidation;
-import ca.bc.gov.educ.api.psi.util.PermissionsContants;
+import ca.bc.gov.educ.api.psi.util.PermissionsConstants;
 import ca.bc.gov.educ.api.psi.util.ResponseHelper;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
@@ -48,7 +48,7 @@ public class PsiController {
 	ResponseHelper response;
 
     @GetMapping
-    @PreAuthorize(PermissionsContants.READ_PSI_INFO)
+    @PreAuthorize(PermissionsConstants.READ_PSI_INFO)
     @Operation(summary = "Find All PSIs", description = "Get All PSIs", tags = { "PSI" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<List<Psi>> getAllPSIs() { 
@@ -57,16 +57,19 @@ public class PsiController {
     }
     
     @GetMapping(EducPsiApiConstants.GET_PSI_BY_CODE_MAPPING)
-    @PreAuthorize(PermissionsContants.READ_PSI_INFO)
+    @PreAuthorize(PermissionsConstants.READ_PSI_INFO)
     @Operation(summary = "Find a PSI by Code", description = "Get a PSI by Code", tags = { "PSI" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"),@ApiResponse(responseCode = "400", description = "BAD REQUEST")})
     public ResponseEntity<Psi> getPSIDetails(@PathVariable String psiCode) { 
     	logger.debug("getPSIDetails : ");
-        return response.GET(psiService.getPSIDetails(psiCode));
+    	OAuth2AuthenticationDetails auth =
+				(OAuth2AuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails();
+    	String accessToken = auth.getTokenValue();
+        return response.GET(psiService.getPSIDetails(psiCode,accessToken));
     }
     
     @GetMapping(EducPsiApiConstants.GET_PSI_SEARCH_MAPPING)
-    @PreAuthorize(PermissionsContants.READ_PSI_INFO)
+    @PreAuthorize(PermissionsConstants.READ_PSI_INFO)
     @Operation(summary = "Search for PSIs", description = "Search For PSIs", tags = { "PSI" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<List<Psi>> getPSIByParams(
