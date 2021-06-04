@@ -7,7 +7,6 @@ import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -31,7 +30,7 @@ import ca.bc.gov.educ.api.psi.model.dto.Psi;
 import ca.bc.gov.educ.api.psi.model.entity.PsiEntity;
 import ca.bc.gov.educ.api.psi.repository.PsiCriteriaQueryRepository;
 import ca.bc.gov.educ.api.psi.repository.PsiRepository;
-import ca.bc.gov.educ.api.psi.repository.criteria.CriteriaHelper;
+import ca.bc.gov.educ.api.psi.util.criteria.CriteriaHelper;
 import ca.bc.gov.educ.api.psi.util.EducPsiApiConstants;
 import reactor.core.publisher.Mono;
 
