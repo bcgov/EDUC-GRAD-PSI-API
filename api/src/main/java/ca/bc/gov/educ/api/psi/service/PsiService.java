@@ -17,8 +17,8 @@ import ca.bc.gov.educ.api.psi.model.entity.PsiEntity;
 import ca.bc.gov.educ.api.psi.model.transformer.PsiTransformer;
 import ca.bc.gov.educ.api.psi.repository.PsiCriteriaQueryRepository;
 import ca.bc.gov.educ.api.psi.repository.PsiRepository;
-import ca.bc.gov.educ.api.psi.repository.criteria.CriteriaHelper;
-import ca.bc.gov.educ.api.psi.repository.criteria.GradCriteria.OperationEnum;
+import ca.bc.gov.educ.api.psi.util.criteria.CriteriaHelper;
+import ca.bc.gov.educ.api.psi.util.criteria.GradCriteria.OperationEnum;
 import ca.bc.gov.educ.api.psi.util.EducPsiApiConstants;
 
 @Service
