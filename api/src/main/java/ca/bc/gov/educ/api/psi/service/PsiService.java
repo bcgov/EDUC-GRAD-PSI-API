@@ -74,10 +74,10 @@ public class PsiService {
 
 	public List<Psi> getPSIByParams(String psiName, String psiCode, String cslCode, String transmissionMode,String accessToken) {
 		CriteriaHelper criteria = new CriteriaHelper();
-        getSearchCriteria("psiCode", psiCode, criteria);
-        getSearchCriteria("psiName", psiName, criteria);
-        getSearchCriteria("cslCode", cslCode, criteria);
-        getSearchCriteria("transmissionMode", transmissionMode, criteria);
+        getSearchCriteria("psiCode", psiCode,"psiCode", criteria);
+        getSearchCriteria("psiName", psiName,"psiName", criteria);
+        getSearchCriteria("cslCode", cslCode,"cslCode", criteria);
+        getSearchCriteria("transmissionMode","transmissionMode", transmissionMode, criteria);
         List<Psi> psiList = psiTransformer.transformToDTO(psiCriteriaQueryRepository.findByCriteria(criteria, PsiEntity.class));
         psiList.forEach(pL -> {
     		GradCountry country = webClient.get()
@@ -100,12 +100,22 @@ public class PsiService {
 		return psiList;
 	}
 	
-	public CriteriaHelper getSearchCriteria(String roolElement, String value, CriteriaHelper criteria) {
-        if (StringUtils.isNotBlank(value)) {
-            if (StringUtils.contains(value, "*")) {
-                criteria.add(roolElement, OperationEnum.STARTS_WITH_IGNORE_CASE, StringUtils.strip(value.toUpperCase(), "*"));
-            } else {
-                criteria.add(roolElement, OperationEnum.EQUALS, value.toUpperCase());
+	public CriteriaHelper getSearchCriteria(String roolElement, String value, String parameterType, CriteriaHelper criteria) {
+        if(parameterType.equalsIgnoreCase("psiName")) {
+        	if (StringUtils.isNotBlank(value)) {
+                if (StringUtils.contains(value, "*")) {
+                    criteria.add(roolElement, OperationEnum.LIKE, StringUtils.strip(value.toUpperCase(), "*"));
+                } else {
+                    criteria.add(roolElement, OperationEnum.EQUALS, value.toUpperCase());
+                }
+            }
+        }else {
+        	if (StringUtils.isNotBlank(value)) {
+                if (StringUtils.contains(value, "*")) {
+                    criteria.add(roolElement, OperationEnum.STARTS_WITH_IGNORE_CASE, StringUtils.strip(value.toUpperCase(), "*"));
+                } else {
+                    criteria.add(roolElement, OperationEnum.EQUALS, value.toUpperCase());
+                }
             }
         }
         return criteria;
