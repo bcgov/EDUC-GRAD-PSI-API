@@ -77,7 +77,7 @@ public class PsiService {
         getSearchCriteria("psiCode", psiCode,"psiCode", criteria);
         getSearchCriteria("psiName", psiName,"psiName", criteria);
         getSearchCriteria("cslCode", cslCode,"cslCode", criteria);
-        getSearchCriteria("transmissionMode","transmissionMode", transmissionMode, criteria);
+        getSearchCriteria("transmissionMode",transmissionMode,"transmissionMode", criteria);
         List<Psi> psiList = psiTransformer.transformToDTO(psiCriteriaQueryRepository.findByCriteria(criteria, PsiEntity.class));
         psiList.forEach(pL -> {
     		GradCountry country = webClient.get()
