@@ -1,4 +1,4 @@
-package ca.bc.gov.educ.api.psi.repository.criteria;
+package ca.bc.gov.educ.api.psi.util.criteria;
 
 public class GradCriteria {
 
