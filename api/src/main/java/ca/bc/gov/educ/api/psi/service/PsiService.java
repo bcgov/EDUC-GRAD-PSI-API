@@ -52,21 +52,25 @@ public class PsiService {
 	public Psi getPSIDetails(String psiCode,String accessToken) {
 		Psi psi =  psiTransformer.transformToDTO(psiRepository.findById(psiCode));
 		if(psi != null) {
-			GradCountry country = webClient.get()
-					.uri(String.format(educPsiApiConstants.getCountryByCountryCodeUrl(), psi.getCountryCode()))
-					.headers(h -> h.setBearerAuth(accessToken))
-					.retrieve()
-					.bodyToMono(GradCountry.class).block();
-	        if(country != null) {
-	        	psi.setCountryName(country.getCountryName());
+			if(StringUtils.isNotBlank(psi.getCountryCode())) {
+				GradCountry country = webClient.get()
+						.uri(String.format(educPsiApiConstants.getCountryByCountryCodeUrl(), psi.getCountryCode()))
+						.headers(h -> h.setBearerAuth(accessToken))
+						.retrieve()
+						.bodyToMono(GradCountry.class).block();
+		        if(country != null) {
+		        	psi.setCountryName(country.getCountryName());
+				}
 			}
-	        GradProvince province = webClient.get()
-					.uri(String.format(educPsiApiConstants.getProvinceByProvinceCodeUrl(), psi.getProvinceCode()))
-					.headers(h -> h.setBearerAuth(accessToken))
-					.retrieve()
-	        		.bodyToMono(GradProvince.class).block();
-	        if(province != null) {
-	        	psi.setProvinceName(province.getProvName());
+			if(StringUtils.isNotBlank(psi.getProvinceCode())) {
+		        GradProvince province = webClient.get()
+						.uri(String.format(educPsiApiConstants.getProvinceByProvinceCodeUrl(), psi.getProvinceCode()))
+						.headers(h -> h.setBearerAuth(accessToken))
+						.retrieve()
+		        		.bodyToMono(GradProvince.class).block();
+		        if(province != null) {
+		        	psi.setProvinceName(province.getProvName());
+				}
 			}
 		}
 		return psi;
@@ -80,22 +84,26 @@ public class PsiService {
         getSearchCriteria("transmissionMode",transmissionMode,"transmissionMode", criteria);
         List<Psi> psiList = psiTransformer.transformToDTO(psiCriteriaQueryRepository.findByCriteria(criteria, PsiEntity.class));
         psiList.forEach(pL -> {
-    		GradCountry country = webClient.get()
-					.uri(String.format(educPsiApiConstants.getCountryByCountryCodeUrl(), pL.getCountryCode()))
-					.headers(h -> h.setBearerAuth(accessToken))
-					.retrieve()
-					.bodyToMono(GradCountry.class).block();
-	        if(country != null) {
-	        	pL.setCountryName(country.getCountryName());
-			}
-	        GradProvince province = webClient.get()
-					.uri(String.format(educPsiApiConstants.getProvinceByProvinceCodeUrl(), pL.getProvinceCode()))
-					.headers(h -> h.setBearerAuth(accessToken))
-					.retrieve()
-	        		.bodyToMono(GradProvince.class).block();
-	        if(province != null) {
-	        	pL.setProvinceName(province.getProvName());
-			}
+        	if(StringUtils.isNotBlank(pL.getCountryCode())) {
+	    		GradCountry country = webClient.get()
+						.uri(String.format(educPsiApiConstants.getCountryByCountryCodeUrl(), pL.getCountryCode()))
+						.headers(h -> h.setBearerAuth(accessToken))
+						.retrieve()
+						.bodyToMono(GradCountry.class).block();
+		        if(country != null) {
+		        	pL.setCountryName(country.getCountryName());
+				}
+        	}
+        	if(StringUtils.isNotBlank(pL.getProvinceCode())) {
+		        GradProvince province = webClient.get()
+						.uri(String.format(educPsiApiConstants.getProvinceByProvinceCodeUrl(), pL.getProvinceCode()))
+						.headers(h -> h.setBearerAuth(accessToken))
+						.retrieve()
+		        		.bodyToMono(GradProvince.class).block();
+		        if(province != null) {
+		        	pL.setProvinceName(province.getProvName());
+				}
+        	}
     	});
 		return psiList;
 	}
