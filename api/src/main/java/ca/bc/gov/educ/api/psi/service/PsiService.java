@@ -76,36 +76,13 @@ public class PsiService {
 		return psi;
 	}
 
-	public List<Psi> getPSIByParams(String psiName, String psiCode, String cslCode, String transmissionMode,String accessToken) {
+	public List<Psi> getPSIByParams(String psiName, String psiCode, String cslCode, String transmissionMode) {
 		CriteriaHelper criteria = new CriteriaHelper();
         getSearchCriteria("psiCode", psiCode,"psiCode", criteria);
         getSearchCriteria("psiName", psiName,"psiName", criteria);
         getSearchCriteria("cslCode", cslCode,"cslCode", criteria);
-        getSearchCriteria("transmissionMode",transmissionMode,"transmissionMode", criteria);
-        List<Psi> psiList = psiTransformer.transformToDTO(psiCriteriaQueryRepository.findByCriteria(criteria, PsiEntity.class));
-        psiList.forEach(pL -> {
-        	if(StringUtils.isNotBlank(pL.getCountryCode())) {
-	    		GradCountry country = webClient.get()
-						.uri(String.format(educPsiApiConstants.getCountryByCountryCodeUrl(), pL.getCountryCode()))
-						.headers(h -> h.setBearerAuth(accessToken))
-						.retrieve()
-						.bodyToMono(GradCountry.class).block();
-		        if(country != null) {
-		        	pL.setCountryName(country.getCountryName());
-				}
-        	}
-        	if(StringUtils.isNotBlank(pL.getProvinceCode())) {
-		        GradProvince province = webClient.get()
-						.uri(String.format(educPsiApiConstants.getProvinceByProvinceCodeUrl(), pL.getProvinceCode()))
-						.headers(h -> h.setBearerAuth(accessToken))
-						.retrieve()
-		        		.bodyToMono(GradProvince.class).block();
-		        if(province != null) {
-		        	pL.setProvinceName(province.getProvName());
-				}
-        	}
-    	});
-		return psiList;
+        getSearchCriteria("transmissionMode",transmissionMode,"transmissionMode", criteria);        
+		return psiTransformer.transformToDTO(psiCriteriaQueryRepository.findByCriteria(criteria, PsiEntity.class));
 	}
 	
 	public CriteriaHelper getSearchCriteria(String roolElement, String value, String parameterType, CriteriaHelper criteria) {

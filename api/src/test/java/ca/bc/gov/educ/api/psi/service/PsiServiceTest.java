@@ -228,7 +228,7 @@ public class PsiServiceTest {
       when(this.responseMock.bodyToMono(GradProvince.class)).thenReturn(monoProvinceResponse);
       when(this.monoProvinceResponse.block()).thenReturn(province);
 
-        var result = psiService.getPSIByParams("Autobody", "AB", null,null,"accessToken");
+        var result = psiService.getPSIByParams("Autobody", "AB", null,null);
         assertThat(result).isNotNull();
         assertThat(result.size()).isEqualTo(1);
         assertThat(result.get(0).getPsiCode()).isEqualTo("AB");
@@ -282,7 +282,7 @@ public class PsiServiceTest {
       when(this.responseMock.bodyToMono(GradProvince.class)).thenReturn(monoProvinceResponse);
       when(this.monoProvinceResponse.block()).thenReturn(province);
 
-        var result = psiService.getPSIByParams("Autobody", "AB*", null,null,"accessToken");
+        var result = psiService.getPSIByParams("Autobody", "AB*", null,null);
         assertThat(result).isNotNull();
         assertThat(result.size()).isEqualTo(1);
         assertThat(result.get(0).getPsiCode()).isEqualTo("AB");
