@@ -80,6 +80,6 @@ public class PsiController {
     	OAuth2AuthenticationDetails auth =
 				(OAuth2AuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails();
     	String accessToken = auth.getTokenValue();
-		return response.GET(psiService.getPSIByParams(psiName,psiCode,cslCode,transmissionMode,accessToken));
+		return response.GET(psiService.getPSIByParams(psiName,psiCode,cslCode,transmissionMode));
 	}
 }

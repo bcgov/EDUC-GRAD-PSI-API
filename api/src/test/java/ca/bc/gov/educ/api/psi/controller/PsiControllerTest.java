@@ -85,8 +85,8 @@ public class PsiControllerTest {
         Mockito.when(authentication.getDetails()).thenReturn(details);
         SecurityContextHolder.setContext(securityContext);
 
-        Mockito.when(psiService.getPSIByParams("Test Psi", "1234567", null,null,null)).thenReturn(Arrays.asList(school));
+        Mockito.when(psiService.getPSIByParams("Test Psi", "1234567", null,null)).thenReturn(Arrays.asList(school));
         psiController.getPSIByParams("Test Psi","1234567", null, null);
-        Mockito.verify(psiService).getPSIByParams("Test Psi", "1234567", null,null,null);
+        Mockito.verify(psiService).getPSIByParams("Test Psi", "1234567", null,null);
     }
 }
