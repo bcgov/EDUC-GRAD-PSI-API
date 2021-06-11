@@ -2,6 +2,8 @@ package ca.bc.gov.educ.api.psi;
 
 import ca.bc.gov.educ.api.psi.model.dto.Psi;
 import ca.bc.gov.educ.api.psi.model.entity.PsiEntity;
+import reactor.netty.http.client.HttpClient;
+
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +49,9 @@ public class EducPsiApiApplication {
 
     @Bean
     public WebClient webClient() {
-        return WebClient.create();
+    	HttpClient client = HttpClient.create();
+        client.warmup().block();
+        return WebClient.builder().build();
     }
 
     @Configuration

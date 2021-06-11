@@ -16,6 +16,8 @@ public class Psi {
 	private String city;	
 	private String provinceCode;	
 	private String countryCode;    
+	private String provinceName;
+    private String countryName;
     private String postal;    
     private String cslCode;    
     private String attentionName; 
@@ -75,7 +77,13 @@ public class Psi {
 		return psiGrouping != null ? psiGrouping.trim(): null;
 	}
 
-
+	public String getProvinceName() {
+		return provinceName != null ? provinceName.trim(): null;
+	}
+	
+	public String getCountryName() {
+		return countryName != null ? countryName.trim(): null;
+	}
 
 	@Override
 	public String toString() {
